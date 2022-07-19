@@ -1,0 +1,344 @@
+% ESTE ARCHIVO NO DEBERÍA SER MODIFICADO (salvo quizás los puntos 6 y 7 si tuvieron licencias o quieren que no les consideren los antecedentes durante la pandemia, respectivamente)
+  % Completar los datos en datos_del_aspirante.tex
+  % Completar los antescendentes en docentes.tex, extension.tex, profesionales.tex y cientificos.tex
+  % Completar notas y otros en otros.tex
+  % Compilar con make
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{dashrule}
+\usepackage{ifthen}
+\usepackage[pdftex,top=2.5cm,left=2.5cm,right=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{ulem}
+\usepackage{graphicx}
+\input{datos_del_aspirante}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\nombresDelAspirante\ \apellidoDelAspirante\ \ \ \ \ \ \ \ \ \ \ \ \ \ LU \libretaUniversitariaDelAspirante
+\ \ \ \ \ \ \ \ \ \ \ifthenelse{\equal{\numeroDeLegajoDelAspirante}{}}{}{Legajo \numeroDeLegajoDelAspirante}}
+\rhead{\emailDelAspirante}
+\rfoot{\includegraphics[scale=0.03]{firma.png}\ \ \ \thepage\ \ \ \ \ \ \ }
+\renewcommand{\headrulewidth}{0pt}
+
+\newcommand{\cargo}[2]{\noindent \textit{Concurso para el cargo de} \MakeUppercase{\textbf{#1}} \hspace{0.5cm} \textit{Dedicación} \MakeUppercase{\textbf{#2}}}
+\newcommand{\areas}[3]{\noindent \textit{Grupo de asignaturas o área departamental (si se inscribe en más de una, haga una lista de todas ellas):}
+
+\medskip
+
+\noindent \MakeUppercase{\textbf{#1}}
+\ifthenelse{\equal{#2}{}}{}{\MakeUppercase{\textbf{, {#2}}}}
+\ifthenelse{\equal{#3}{}}{}{\MakeUppercase{\textbf{, {#3}}}}
+}
+
+\newcommand{\apellido}[1]{\noindent \textit{APELLIDO:} \MakeUppercase{\textbf{#1}}}
+\newcommand{\nombre}[1]{\noindent \textit{NOMBRES:} \MakeUppercase{\textbf{#1}}}
+\newcommand{\dni}[1]{\noindent \textit{DOCUMENTO DE IDENTIDAD: TIPO} Documento Nacional de Identidad \hspace{0.25cm} \textit{NÚMERO} \textbf{#1}}
+\newcommand{\fechaNacimiento}[3]{\noindent \textit{FECHA DE NACIMIENTO: DÍA} \textbf{#1} \hspace{0.1cm} \textit{MES} \textbf{#2} {\hspace{0.1cm}} \textit{AÑO} \textbf{#3}}
+\newcommand{\domicilio}[5]{\noindent \textit{Calle y número:} \MakeUppercase{\textbf{#1}}
+
+\noindent \textit{Piso y depto:} \MakeUppercase{\textbf{#2}}
+
+\noindent \textit{Localidad:} \MakeUppercase{\textbf{#3}} {\hspace{3cm}} \textit{Código Postal:} \textbf{#4}
+
+\noindent \textit{TEL:} \textbf{#5}
+}
+\newcommand{\fecha}[3]{\MakeUppercase{\textbf{#1 de #2 de #3}}}
+\newcommand{\email}[1]{\noindent \textit{Email:} \MakeUppercase{\textbf{#1}}}
+\newcommand{\legajo}[1]{\noindent \textit{NÚMERO DE LEGAJO:} {#1}}
+
+\newcommand{\WorkEntry}[4]{
+        \item {#1}                                      % Jobname
+        \ifthenelse{\equal{#2}{}}{}{ \\ \textit{#2}}    % Company
+        \ifthenelse{\equal{#3}{}}{}{ \\ {#3}}           % Duration
+        \ifthenelse{\equal{#4}{}}{}{ \\ \hangindent=2em\hangafter=0
+          \small {#4} \normalsize}}                     % Description
+
+\begin{document}
+\begin{center}
+{\bf ANEXO ARTÍCULO No 7 RESOL. CD 28/09}
+\end{center}
+{\bf \noindent FACULTAD DE CIENCIAS EXACTAS Y NATURALES
+
+\noindent SOLICITUD DE INSCRIPCIÓN}
+
+\bigskip
+
+\noindent \textit{(para llenar por el Departamento)}
+
+\bigskip
+
+\noindent \textit{N$^\circ$ de Inscripción:} \hdashrule{4cm}{0.5pt}{0.75pt}
+
+\medskip
+
+\noindent \textit{Departamento de} \MakeUppercase{\textbf{Computación}}
+
+\cargo
+  {\cargoConcurso}
+  {\dedicacionConcurso}
+
+\areas{\primerAreaQueConcursa}{\segundaAreaQueConcursa}{\tercerAreaQueConcursa}
+
+\medskip
+
+\noindent \hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\noindent \textit{Campo de Investigación:}
+
+\medskip
+
+\noindent \hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\medskip
+
+\noindent \hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\medskip
+
+\noindent \hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\medskip
+
+\noindent \hrulefill
+
+\bigskip
+
+\apellido{\apellidoDelAspirante}
+
+\medskip
+
+\nombre{\nombresDelAspirante}
+
+\medskip
+
+\dni{\numeroDocumentoDeIdentidadDelAspirante}
+
+\medskip
+
+\fechaNacimiento{\numeroDiaNacimientoDelAspirante}{\numeroMesNacimientoDelAspirante}{\anioNacimientoDelAspirante}
+
+\medskip
+
+\email{\emailDelAspirante}
+
+\bigskip
+
+\noindent \textit{DOMICILIO REAL}
+
+\domicilio{\direccionDelDomicilioDelAspirante}{\pisoDelDomicilioDelAspirante}{\localidadDelDomicilioDelAspirante}{\codigoPostalDelDomicilioDelAspirante}{\telefonoDelDomicilioDelAspirante}
+
+\bigskip
+\bigskip
+
+\noindent \textit{a) Declaro bajo juramento no encontrarme comprendido en las causales
+de inhabilitación para el desempeño de cargos públicos.}
+
+\noindent \textit{b) La presentación de esta solicitud importa, por parte del inscripto,
+el conocimiento de las condiciones fijadas en el Reglamento de concurso aprobado
+por Resolución del Consejo Directivo N$^\circ$ 28/09 y modificatorias CD Nros. 1497/18 y 481/19.}
+
+\noindent \textit{c) Declaro conocer que, por Resolución CD N$^\circ$ 716/86 el cargo de
+auxiliar docente con dedicación exclusiva o semiexclusiva es incompatible con
+el goce de una beca de igual dedicación.}
+
+\bigskip
+\bigskip
+
+\noindent \textit{\textbf{Buenos Aires,}} \fecha{\numeroDiaEntregaDeDocumentacion}{\nombreMesEntregaDeDocumentacion}{\anioEntregaDeDocumentacion}
+
+\bigskip
+\bigskip
+\bigskip
+\includegraphics[scale=0.04]{firma.png}
+\\
+Jonathan Bekenstein
+
+\noindent \hdashrule{6cm}{0.5pt}{0.75pt}
+
+\noindent \textit{\textbf{Firma y aclaración del aspirante}}
+
+\newpage
+
+\noindent {\bf LISTADO DE DOCUMENTACIÓN PRESENTADA}
+
+\bigskip
+\bigskip
+
+\noindent \begin{tabular}{lccc}
+
+\vspace{0.3cm}
+
+ &\hspace{2cm} &\textit{\hspace{0.5cm} P\'ag \hspace{0.5cm}} & \textit{\hspace{0.5cm} A P\'ag \hspace{0.5cm}} \\
+
+\vspace{0.1cm}
+
+\textit{Antecedentes Docentes}& & \textbf{~\pageref{begin-docentes}} & \textbf{~\pageref{end-docentes}} \\
+
+\vspace{0.1cm}
+
+\textit{Antecedentes Científicos}& & \textbf{~\pageref{begin-cientificos}} & \textbf{~\pageref{end-cientificos}} \\
+
+\vspace{0.1cm}
+
+\textit{Antecedentes de Extensión}& & \textbf{~\pageref{begin-extension}} & \textbf{~\pageref{end-extension}} \\
+
+\vspace{0.1cm}
+
+\textit{Antecedentes Profesionales}& & \textbf{~\pageref{begin-profesionales}} & \textbf{~\pageref{end-profesionales}} \\
+
+\vspace{0.1cm}
+
+\textit{Calificaciones Títulos Otros}& & \textbf{~\pageref{begin-otros}} & \textbf{~\pageref{end-otros}} \\
+
+\end{tabular}
+
+\bigskip
+\bigskip
+\bigskip
+
+{\noindent \bf Detalle de documentación presentada:}
+
+\bigskip
+
+\noindent \textit{a)} \hfill \hdashrule{16cm}{0.5pt}{0.75pt}
+
+\medskip
+
+\hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\medskip
+
+\noindent \textit{b)} \hfill \hdashrule{16cm}{0.5pt}{0.75pt}
+
+\medskip
+
+\hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\medskip
+
+\noindent \textit{c)} \hfill \hdashrule{16cm}{0.5pt}{0.75pt}
+
+\medskip
+
+\hdashrule{\linewidth}{0.5pt}{0.75pt}
+
+\bigskip
+\bigskip
+\bigskip
+
+\noindent \textit{Fecha:}
+\fecha{\numeroDiaEntregaDeDocumentacion}{\nombreMesEntregaDeDocumentacion}{\anioEntregaDeDocumentacion}
+
+\bigskip
+\bigskip
+
+\noindent \hrulefill
+
+\bigskip
+\bigskip
+
+\noindent {\bf TALON PARA EL ASPIRANTE}
+
+\bigskip
+
+\noindent \textit{Fecha} \hspace{3cm} \textit{N$^\circ$ de inscripción} \hdashrule{0.75cm}{0.5pt}{0.75pt}
+
+\bigskip
+
+\noindent \textit{En el día de la fecha recibí la documentación del aspirante} \hdashrule{7cm}{0.5pt}{0.75pt}
+
+\bigskip
+
+\noindent \textit{para la inscripción al concurso de} \hdashrule{10.9cm}{0.5pt}{0.75pt}
+
+\bigskip
+
+\noindent \hdashrule{6cm}{0.5pt}{0.75pt} \textit{en el Departamento de} \hdashrule{6.4cm}{0.5pt}{0.75pt}
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
+
+\noindent \hdashrule{5cm}{0.5pt}{0.75pt}
+
+\noindent \textit{Firma y aclaración del}
+
+\noindent \textit{funcionario receptor}
+
+\vfill
+
+\noindent \hrulefill
+
+\newpage
+
+\begin{itemize}[leftmargin=-0.7cm]
+
+\label{begin-docentes}
+\item[] {1. ANTECEDENTES DOCENTES
+\input{docentes}
+\label{end-docentes}
+}
+
+\bigskip
+
+\label{begin-cientificos}
+\item[] {2. ANTECEDENTES CIENTIFICOS:
+\input{cientificos}
+\label{end-cientificos}
+}
+
+\bigskip
+
+\label{begin-extension}
+\item[] {3. ANTECEDENTES DE EXTENSIÓN
+\input{extension}
+\label{end-extension}
+}
+
+\bigskip
+
+\label{begin-profesionales}
+\item[] {4. ANTECEDENTES PROFESIONALES
+\input{profesionales}
+\label{end-profesionales}
+}
+
+\bigskip
+
+\label{begin-otros}
+\item[] {5. CALIFICACIONES, TITULOS, ESTUDIOS, OTROS.
+\input{otros}
+\label{end-otros}
+}
+
+\bigskip
+
+\item[] {6. INFORMACIÓN SOBRE LICENCIAS.
+\begin{itemize}[leftmargin=0.8cm]
+\item[] No se tuvo ninguna licencia.
+\end{itemize}
+}
+
+\bigskip
+
+\item[] {7. Considerar los antecedentes comprendidos en el período de marzo 2020 - marzo 2022: \textbf{Sí}}
+
+\end{itemize}
+
+\vfill
+
+\begin{center}
+{\bf La información suministrada tiene carácter de declaración jurada.
+
+La solicitud de inscripción debe caratular la presentación seguida del ``Listado
+de la documentación presentada''. Numere, firme y abroche todas las páginas.
+Presentar por triplicado.}
+\end{center}
+
+\end{document}
