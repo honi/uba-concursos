@@ -1,0 +1,116 @@
+\input{../Template}
+
+\setupsizes{9pt}
+
+\begin{document}
+
+\textbf{Prueba de Oposición - Área Sistemas}
+\hfill
+Jonathan Bekenstein - \today
+
+\section*{Enunciado: \normalsize{ORGA1 / Práctica 3 - Arquitectura del CPU / Ejercicio 7}}
+
+Dados los siguientes valores de la memoria y del registro R0 de la arquitectura ORGA1, ¿qué valores cargan en el registro R1 las siguientes instrucciones?
+
+\begin{multicols}{2}
+    \begin{enumerate}[a)]
+        \item \lstinline{MOV R1, 0x20} (inmediato)
+        \item \lstinline{MOV R1, [0x20]} (directo)
+        \item \lstinline{MOV R1, [[0x20]]} (indirecto)
+        \item \lstinline{MOV R1, R0} (registro)
+        \item \lstinline{MOV R1, [R0]} (indirecto registro)
+        \item \lstinline{MOV R1, [R0 + 0x20]} (indexado registro)
+    \end{enumerate}
+    \columnbreak
+    \includesvg[scale=0.75]{assets/enunciado}
+\end{multicols}
+
+\section*{Contexto y conocimientos previos}
+
+Este ejercicio asume que las y los alumnos ya vieron la teórica sobre modos de direccionamiento y que han resuelto algunos ejercicios de programación assembler. Además es necesario haber comprendido el modelo de Von Neumann y estar familiarizado con la cartilla de la máquina ORGA1.
+
+Es un buen ejercicio para repasar todos los modos de direccionamiento soportados por la máquina ORGA1 como así también validar el entendimiento que tienen sobre el ciclo de instrucción en ésta máquina y el impacto de los modos de direccionamiento durante las etapas de fetch y decode.
+
+\section*{Resolución}
+
+\meta{Como introducción al ejercicio me aseguro que se entienda el enunciado y que no haya dudas sobre la instrucción MOV más allá del modo de direccionamiento utilizado para el segundo operando.}
+
+\subsection*{a) \lstinline{MOV R1, 0x20} (inmediato)}
+
+\setlength{\columnsep}{-15em}
+\begin{multicols}{2}
+\includesvg[scale=0.75]{assets/a}
+
+\columnbreak
+
+En este modo, el valor inmediato \colorbox[HTML]{97D077}{\lstinline{0x20}} incluído en la instrucción es directamente el valor que guardamos en R1. La nomenclatura ``inmediato'' hace referencia a que el valor está disponible inmediatamente como parte de la instrucción decodificada, no es necesario realizar ningún paso adicional.
+
+\meta{¿Cómo obtenemos el valor inmediato durante el fetch y decode? ¿Cuántos accesos a memoria se necesitan para ejecutar la instrucción?}
+\end{multicols}
+
+\subsection*{b) \lstinline{MOV R1, [0x20]} (directo)}
+
+\setlength{\columnsep}{10em}
+\begin{multicols}{2}
+\includesvg[scale=0.75]{assets/b}
+
+\columnbreak
+
+En la sintaxis assembler de ORGA1, cuando nos encontramos un valor entre corchetes [] significa que debemos interpretarlo como una dirección de memoria. Para ejecutar la instrucción, primero leemos esa dirección de memoria y luego ese valor es el que termina usando la instrucción. En este caso, debemos leer la dirección \colorbox[HTML]{FFD966}{\lstinline{[0x20]}} para obtener el valor \colorbox[HTML]{97D077}{\lstinline{0x40}}, el cual termina siendo guardado en R1.
+
+\meta{¿Y ahora cuántos accesos a memoria hacemos en total para ejecutar esta instrucción?}
+\end{multicols}
+
+\subsection*{c) \lstinline{MOV R1, [[0x20]]} (indirecto)}
+
+\includesvg[scale=0.75]{assets/c}
+
+Si el modo directo hace una traducción simple: \colorbox[HTML]{FFD966}{dirección} $\to$ \colorbox[HTML]{97D077}{contenido}, el indirecto hace una traducción doble para obtener el operando de la instrucción: \colorbox[HTML]{FFD966}{\lstinline{[[0x20]]}} $\to$ \colorbox[HTML]{FFD966}{\lstinline{[0x40]}} $\to$ \colorbox[HTML]{97D077}{\lstinline{0x60}}. Necesitamos leer 2 veces la memoria para obtener el valor final.
+
+\meta{Sí están cursando AED2, ¿Les recuerda algo que hayan visto de C++?}
+
+Este modo es conceptualmente la misma idea que un puntero en C++. Un puntero es una variable que tiene su propia dirección de memoria, y en su contenido guardamos la dirección de algún otro dato que está en otro lugar de la memoria. En efecto, cuando desreferenciamos un puntero, estamos haciendo lo mismo que el modo de direccionamiento indirecto.
+
+\meta{¿Tendría sentido tener un modo de direccionamiento del estilo \lstinline{[[[0x20]]]}? ¿Cómo podríamos lograr lo mismo con los modos que ya posee la máquina ORGA1?}
+
+\subsection*{d) \lstinline{MOV R1, R0} (registro)}
+
+\setlength{\columnsep}{10em}
+\begin{multicols}{2}
+\includesvg[scale=0.75]{assets/d}
+
+\columnbreak
+
+Este modo es parecido al inmediato excepto que el valor a colocar en el registro destino lo obtenemos desde otro registro (en vez de especificarlo en la instrucción misma). Leemos \colorbox[HTML]{FFD966}{R0} y colocamos su valor \colorbox[HTML]{97D077}{\lstinline{0x30}} en R1.
+
+\meta{¿El valor de R0 es parte de la instrución?}
+
+No, la instrucción únicamente codifica que queremos copiar el contenido de R0 en R1. A priori no sabemos qué valor estará guardado en R0 cuando se ejecute esta instrucción.
+\end{multicols}
+
+\subsection*{e) \lstinline{MOV R1, [R0]} (indirecto registro)}
+
+\includesvg[scale=0.75]{assets/e}
+
+Este modo es análogo al indirecto, solo que en vez de codificar la dirección como parte de la instrucción, interpretamos el valor guardado en R0 como una dirección: \colorbox[HTML]{FFD966}{\lstinline{[R0]}} $\to$ \colorbox[HTML]{FFD966}{\lstinline{[0x30]}} $\to$ \colorbox[HTML]{97D077}{\lstinline{0x50}}.
+
+\meta{¿Qué consideraciones hay que tener en cuenta para que esto funcione? ¿Qué sucede si el tamaño de la palabra difiere del tamaño de las direcciones de memoria?}
+
+En la máquina ORGA1 sucede que la palabra y las direcciones de memoria ambas tienen 16 bits. Por lo tanto podemos usar el valor de un registro directamente como una dirección de memoria. Caso contrario sería necesario completar o recortar bits.
+
+\meta{¿Cuál sería el impacto si las palabras son más pequeñas que las direcciones? ¿Y al revés?}
+
+\subsection*{f) \lstinline{MOV R1, [R0 + 0x20]} (indexado registro)}
+
+\includesvg[scale=0.75]{assets/f}
+
+El modo indexado registro es como el modo registro, solo que utilizamos el valor guardado en el registro R0 como punto de partida y le sumamos un desplazamiento (el valor inmediato de la instrucción) para obtener la dirección final: \\
+\colorbox[HTML]{FFD966}{\lstinline{[R0 + 0x20]}} $\to$ \colorbox[HTML]{FFD966}{\lstinline{[0x30 + 0x20]}} $\to$ \colorbox[HTML]{FFD966}{\lstinline{[0x50]}} $\to$ \colorbox[HTML]{97D077}{\lstinline{0x70}}.
+
+\meta{¿Podemos desplazarnos hacia atrás? ¿En qué situación sería útil este modo de direccionamiento?}
+
+\section*{Conclusión}
+
+Si bien este ejercicio es relativamente sencillo, permite abordar durante su desarrollo diversos temas relaciones al diseño de la ISA de ORGA1, del formato de instrucción y del ciclo fetch-decode-execute, ya sea premeditadamente por parte del docente o según las preguntas y respuestas de las y los alumnos durante la clase.
+
+\end{document}

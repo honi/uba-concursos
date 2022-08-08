@@ -1,0 +1,166 @@
+\input{../Template}
+
+\setupsizes{11pt}
+
+\begin{document}
+
+\textbf{Prueba de Oposición - Área Algoritmos}
+\hfill
+Jonathan Bekenstein - \today
+
+\section*{Enunciado: \normalsize{AED2 / Práctica 5 - Ordenamiento / Ejercicio 6}}
+
+Sea $A[1 \dots n]$ un arreglo que contiene $n$ números naturales. Diremos que un rango de posiciones $[i \dots j]$, con $1 \leq i \leq j \leq n$, contiene una escalera en $A$ si valen las siguientes dos propiedades:
+
+\begin{enumerate}
+    \item $(\forall k: nat) \; i \leq k < j \implies A[k+1] = A[k]+1$ (esto es, los elementos no sólo están ordenados en forma creciente, sino que además el siguiente vale exactamente uno más que el anterior).
+    \item Si $1 < i$ entonces $A[i] \neq A[i-1]+1$ y si $j < n$ entonces $A[j+1] \neq A[j]+1$ (la propiedad es \emph{maximal}, es decir que el rango no puede extenderse sin que deje de ser una escalera según el punto anterior).
+\end{enumerate}
+
+Se puede verificar fácilmente que cualquier arreglo puede ser descompuesto de manera única como una secuencia de escaleras. Se pide escribir un algoritmo para reposicionar las escaleras del arreglo original, de modo que las mismas se presenten en orden decreciente de longitud y, para las de la misma longitud, se presenten ordenadas de forma creciente por el primer valor de la escalera.
+
+El resultado debe ser del mismo tipo de datos que el arreglo original. Calcule la complejidad temporal de la solución propuesta, y justifique dicho cálculo.
+
+Por ejemplo, el siguiente arreglo: $[\textcolor{red}{5,6},\textcolor{violet}{8,9,10},\textcolor{blue}{7,8,9},\textcolor{cyan}{20},\textcolor{green}{15}]$ debería ser transformado a: $[\textcolor{blue}{7,8,9},\textcolor{violet}{8,9,10},\textcolor{red}{5,6},\textcolor{green}{15},\textcolor{cyan}{20}]$
+
+\section*{Contexto y conocimientos previos}
+
+Este ejercicio se encuentra en la guía práctica de ordenamiento. Dependiendo de la organización de la cursada, si se presenta este ejercicio en una clase práctica probablemente sea la primera vez que mostremos una solución que requiere ordenar por dos criterios distintos. Es importante hacer foco en esto durante la resolución y explicar las técnicas disponibles para éstas situaciones. En la mayoría de los casos es simplemente ordenar 2 veces, pero hay que saber deducir a partir del enunciado por cuál criterio hay que ordenar primero y por cuál después para que el ordenamiento final sea el pedido.
+
+El ejercicio permite mostrar la estrategia de armar una estructura temporal a partir de la entrada del algoritmo para poder resolver el problema de forma eficiente, y luego desarmar esa estructura temporal para retornar el resultado en el formato pedido por el enunciado.
+
+Se asume que las y los alumnos: 1) Conocen los algoritmos de ordenamiento presentados durante las clases previas, específicamente MergeSort. No es necesario que puedan escribir un MergeSort completo desde cero, pero sí entender la idea general del algoritmo y su complejidad. 2) Conocen estas estructuras básicas: arreglo, lista enlazada, tupla. 3) Cuentan con herramientas para diseñar estructuras y el impacto de éstas en la complejidad de los algoritmos.
+
+La resolución no entra en mucho detalle sobre el cálculo de complejidad ya que esto se estudia en la guía práctica 2 y los cálculos necesarios para este ejercicio son relativamente sencillos.
+
+\section*{Resolución}
+
+\meta{Antes de arrancar con la resolución mostraría algunas entradas y salidas más sencillas para validar que las y los alumnos hayan comprendido el enunciado.}
+
+\meta{¿Cuáles son los títulos de los pasos que tenemos que hacer para resolver el problema?}
+
+Podemos subdividir el problema en 3 partes: 1) encontrar todas las escaleras, 2) ordenar las escaleras según el criterio pedido, y 3) armar el arreglo final en base a las escaleras ordenadas. Apliquemos la estrategia top-down para plantear primero una solución con estos 3 pasos y luego entramos en el detalle de cada uno.
+
+\begin{algorithm}[H]
+\caption{
+    \textbf{Solucion}(\textbf{in} A: arreglo(nat)) $\to$ \textbf{out} res: arreglo(nat)
+}
+\begin{algorithmic}[1]
+    \State E: arreglo(escalera) $\gets$ ObtenerEscaleras(A) \Comment {$O(n)$}
+    \State OrdenarEscaleras(E, A) \Comment {$O(n log(n))$}
+    \State res $\gets$ ReposicionarEscaleras(E, A) \Comment{$O(n)$}
+\end{algorithmic}
+\Complexity{$O(n) + O(n log(n)) + O(n) = O(n log(n))$}
+\end{algorithm}
+
+\subsection*{Parte 1: encontrar escaleras}
+
+\meta{¿Qué estructura podemos usar para representar una escalera dentro del arreglo de entrada?}
+
+Podemos representar las escaleras con una tupla que contiene los índices de inicio y fin de la escalera dentro del arreglo de entrada. Para trabajar de forma más semántica, vamos a definir un nuevo tipo de dato:
+
+\textbf{escalera} se representa con \textbf{tupla} $\langle$ inicio: \textbf{nat}, fin: \textbf{nat} $\rangle$
+
+\meta{¿Cómo podemos identificar una escalera dentro del arreglo de entrada? ¿Cuántos ciclos vamos a necesitar?}
+
+El inicio y fin de una escalera define un subarreglo del arreglo de entrada en donde todos los elementos allí contenidos son consecutivos entre ellos (condición 1 del enunciado) y además la escalera es maximal (condición 2 del enunciado). Planteamos 2 ciclos: el ciclo exterior encuentra el inicio de la escalera, el ciclo interior encuentra el fin. Al salir del ciclo interior, movemos el inicio de la próxima escalera al siguiente elemento después del fin de la escalera actual.
+
+\meta{¿Podemos saber de antemano cuántas escaleras hay? ¿Cuál es la cantidad máxima posible de escaleras en un arreglo de tamaño $n$?}
+
+Como máximo podríamos tener $n$ escaleras, esto sucede cuando todos los elementos adyacentes entre sí difieren en más de 1. Pero a priori no sabemos cuántas escaleras hay. En estos casos donde no sabemos exactamente el tamaño del resultado que devuelve el algoritmo, podemos primero armar el resultado en una lista enlazada que puede agregar atras en $O(1)$. Luego, convertimos la lista enlazada en un arreglo en $O(m)$ donde $m$ es el tamaño de la lista enlazada. Dependiendo del algoritmo, también es posible retornar la lista enlazada directamente y trabajar con ella.
+
+\begin{algorithm}[H]
+\caption{
+    \textbf{ObtenerEscaleras}(\textbf{in} A: arreglo(nat)) $\to$ \textbf{out} res: arreglo(escalera)
+}
+\begin{algorithmic}[1]
+    \State B: lista(escalera) $\gets$ CrearLista() \Comment{$O(1)$}
+    \State n $\gets$ tam(A)
+    \State i $\gets$ 1
+    \While{i $\leq$ n} \Comment{$O(n)$}
+        \State k $\gets$ i
+        \While{k $<$ n $\yLuego$ A[k + 1] = A[k] + 1} \Comment{$O(n - i)$}
+            \State k $\gets$ k + 1
+        \EndWhile
+        \State AgregarAtras(B, $\langle$ inicio: i, fin: k $\rangle$) \Comment{$O(1)$}
+        \State i $\gets$ k + 1
+    \EndWhile
+    \State res $\gets$ ListaToArreglo(B) \Comment{$O(tam(B)) = O(n)$ pues $tam(B) \leq n$}
+\end{algorithmic}
+\Complexity{$O(n)$}
+\end{algorithm}
+
+La complejidad resulta $O(n)$ porque si bien hay 2 ciclos, al asignar $i = k + 1$ después del ciclo interior en efecto nos salteamos en el ciclo exterior los elementos que ya recorrimos en el ciclo interior.
+
+\subsection*{Parte 2: ordenar escaleras}
+
+\meta{¿Por cuántos criterios debemos ordenar? ¿Cuáles son?}
+
+Necesitamos ordenar las escaleras por 2 criterios distintos, así que vamos a realizar 2 pasadas de ordenamiento, una por cada criterio, y la segunda pasada debe ser con algún algoritmo estable.
+
+\meta{Importante remarcar que la segunda pasada debe ser con un algoritmo estable para no desordenar lo que ordenó la primer pasada.}
+
+\begin{enumerate}
+    \item Ordenamos las escaleras según su primer elemento. Para obtenerlo, indexamos el arreglo original con el índice de inicio de la escalera.
+    \item Ordenamos las escaleras según su tamaño. Para obtenerlo, hacemos $fin - inicio + 1$ (sumamos 1 porque los índices son inclusivos).
+\end{enumerate}
+
+\meta{¿Qué algoritmo podríamos usar para ordenar? ¿Cambia algo que el arreglo sea de escaleras (tuplas) en vez de naturales?}
+
+Si bien el arreglo de escaleras son tuplas, podemos realizar un MergeSort sobre alguna componente en particular dentro de la tupla, o incluso determinar la clave de ordenamiento en base a ambas componentes de la tupla.
+
+\meta{¿Cuál sería el problema si ordenamos por separado un arreglo con los primeros elementos de cada escalera, y luego otro arreglo con el tamaño de cada escalera?}
+
+Presentamos el algoritmo.
+
+\begin{algorithm}[H]
+\caption{
+    \textbf{OrdenarEscaleras}(\textbf{in/out} E: arreglo(escalera), \textbf{in} A: arreglo(nat))
+}
+\begin{algorithmic}[1]
+    \State MergeSort(E, A) \Comment{$O(n log(n))$, clave de ordenamiento: A[E[i].inicio]}
+    \State MergeSort(E) \Comment{$O(n log(n))$, clave de ordenamiento: E[i].fin - E[i].inicio + 1, decreciente}
+\end{algorithmic}
+\Complexity{$O(n log(n))$ con $n = tam(A)$}
+\end{algorithm}
+
+El peor caso es que tengamos todas escaleras de tamaño 1. Entonces el arreglo $E$ de escaleras tendrá exactamente el mismo tamaño que el arreglo original $A$, y todas las escaleras tendrán el mismo inicio y fin. A raíz de esto, la complejidad del peor caso es ordenar $n$ elementos, lo cual tiene un costo de $O(n log(n))$ porque usamos MergeSort.
+
+\subsection*{Parte 3: armar el resultado final}
+
+\meta{¿Cómo pasamos del arreglo de escaleras a un arreglo de naturales para armar el resultado final?}
+
+Iteramos por el arreglo de escaleras, y por cada una, iteramos por todos las índices entre inicio y fin (inclusives). Indexamos el arreglo original en cada uno de esos índices y colocamos ese elemento en el resultado final, comenzando desde el principio del arreglo y avanzando de a 1 cada vez que colocamos un elemento.
+
+\meta{¿Podemos armar el resultado final directamente en el arreglo original o necesitamos un arreglo nuevo?}
+
+Vamos a necesitar armar el resultado final en un nuevo arreglo ya que es necesario mantener el arreglo original intacto para poder indexar en todos los elementos de cada escalera. Recordemos que definimos las escaleras solo con sus índices de inicio y fin en el arreglo original. Sin el arreglo original intacto, no sabemos qué elementos corresponden a esos índices.
+
+Al terminar de iterar por todas las escaleras, habremos copiado todos los elementos del arreglo original al resultado final, pero en sus posiciones correctas.
+
+\begin{algorithm}[H]
+\caption{
+    \textbf{ReposicionarEscaleras}(\textbf{in} E: arreglo(escalera), \textbf{in} A: arreglo(nat)) $\to$ \textbf{out} res: arreglo(nat)
+}
+\begin{algorithmic}[1]
+    \State res: arreglo(nat) $\gets$ CrearArreglo(tam(A)) \Comment{$O(tam(A)) = O(n)$}
+    \State k $\gets$ 1
+    \For{i $\gets$ 1 \textbf{to} tam(E)}
+        \For{j $\gets$ E[i].inicio \textbf{to} E[i].fin}
+            \State res[k] $\gets$ A[j]
+            \State k $\gets$ k + 1
+        \EndFor
+    \EndFor
+\end{algorithmic}
+\Complexity{$O(n)$}
+\end{algorithm}
+
+La complejidad resulta $O(n)$ porque la cantidad total de elementos a copiar en el arreglo $res$ es siempre $tam(A) = n$, sin importar la cantidad de escaleras encontradas.
+
+\meta{Para finalizar la clase mostraría algunos ejemplos de ejecución para distintas entradas. Cómo se arma el arreglo intermedio con las escaleras, cómo queda ordenado después de cada pasada, y finalmente cómo armamos el resultado final.}
+
+\section*{Conclusión}
+
+Con este ejercicio presentamos una estrategia general para resolver cierto tipo de problemas de ordenamiento. Mostramos cómo podemos ordenar otras estructuras de datos utilizando algoritmos que originalmente trabajan sobre arreglos. Además aplicamos 2 criterios de ordenamiento, y también definimos una estructura de datos intermedia que nos permite resolver el problema de forma eficiente.
+
+\end{document}
