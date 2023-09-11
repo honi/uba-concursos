@@ -15,7 +15,8 @@ http://www.dc.uba.ar/academica/concursos/formulario.
 3. Escribir antecedentes científicos en `cientificos.tex`.
 4. Escribir antecedentes de extensión en `extension.tex`.
 5. Escribir antecedentes profesionales en `profesionales.tex`.
-6. Escribir calificaciones, títulos y otros en `otros.tex`.
+6. Escribir otros en `otros.tex`.
+7. Escribir calificaciones en `calificaciones.tex`.
 
 ## Generar formulario
 
