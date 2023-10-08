@@ -6,3 +6,4 @@
 *.out
 *.toc
 svg-inkscape
+_minted-*

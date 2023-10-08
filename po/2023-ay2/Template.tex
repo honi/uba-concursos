@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel} % Agregar es-nodecimaldot si hay problemas con el separador de decimales y de miles
+\usepackage{fontspec}
+\usepackage{amsmath, amsbsy, amssymb} % Agregar cuando se necesiten: amscd, amssymb, amsthm, latexsym
+\usepackage{enumerate}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{multicol}
+\usepackage{vwcol}
+\usepackage{svg}
+\usepackage{tabularx}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{etoolbox}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{minted}
+\usepackage{xcolor}
+
+\newcommand{\pagesetup}[1]{
+    \usepackage[fontsize=#1]{fontsize}
+    \renewcommand{\familydefault}{\sfdefault}
+    \setmonofont{Ubuntu Mono} % Ubuntu Mono as 'typewriter' - use \ttfamily or \texttt{}
+
+    % Títulos
+    \usepackage{titlesec}
+    \titleformat*{\section}{\large\bfseries}
+    \titleformat*{\subsection}{\normalsize\bfseries}
+    \titlespacing*{\section}{0pt}{1em}{0.65em}
+    \titlespacing*{\subsection}{0pt}{0.5em}{0.5em}
+
+    % Tamaño de hoja y márgenes
+    \usepackage[a4paper,top=1cm,bottom=1cm,left=1cm,right=1cm]{geometry}
+    \setlength{\parindent}{0em}
+    \setlength{\parskip}{0.65em}
+    \setlength{\intextsep}{1em}
+    \setlength{\abovedisplayskip}{1em}
+    \setlength{\belowdisplayskip}{1em}
+    \setlength{\abovedisplayshortskip}{1em}
+    \setlength{\belowdisplayshortskip}{1em}
+    \pagenumbering{gobble}
+
+    % Numeración de las secciones y el índice
+    \setcounter{tocdepth}{1}
+    \renewcommand{\thesubsection}{\thesection.\alph{subsection}}
+
+    % Color de los links externos
+    \usepackage{hyperref}
+    \hypersetup{colorlinks=true, linkcolor=black, urlcolor=blue}
+
+    % Setup de minted para código
+    \definecolor{codebgcolor}{HTML}{EFEFEF}
+    \setminted{style=arduino,bgcolor=codebgcolor,fontsize=\footnotesize}
+    \setmintedinline{bgcolor={}}
+}
+
+% Comandos custom para cositas
+\newcommand{\meta}[1]{\textcolor{gray}{#1}}
+\newcommand{\modulo}{\text{\scriptsize\%\;}}
