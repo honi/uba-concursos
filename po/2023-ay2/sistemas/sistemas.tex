@@ -47,7 +47,7 @@ Además de los pipes utilizados para el anillo, necesitamos un pipe adicional pa
 
 A continuación presentamos la primer parte de \mintinline{c}{main()} que se encarga de crear los pipes y procesos hijo.
 
-\meta{En una clase en vivo escribiría el código en tiempo real con el feedback contínuo de las y los alumnos. Presentar el código ya escrito, por más preámbulo que uno haga, no me parece que sea la mejor estrategia pedagógica. Escribir el código en vivo genera un ritmo más ``lento''. Esto permite que podamos pensar y procesar la solución a un ritmo más natural. También es una buena oportunidad para que puedan observar mis errores mientras suceden orgánicamente, con su respectivo debuggeo y resolución.}
+\meta{En una clase en vivo escribiría el código en tiempo real con el feedback contínuo de las y los alumnos. Presentar el código ya escrito, por más preámbulo que uno haga, no me parece que sea la mejor estrategia pedagógica. Escribir el código en vivo genera un ritmo más ``lento''. Esto permite que podamos pensar y procesar la solución a un ritmo más natural.}
 
 \begin{minted}{c}
 int main(int argc, char **argv) {
@@ -85,8 +85,6 @@ int main(int argc, char **argv) {
 
 Más allá de buenas prácticas, cerrar inteligentemente las puntas (file descriptors) de los pipes que no vamos a usar nos permite utilizar el mecanismo de EOF (end-of-file) provisto por el SO para detectar cuándo tiene que terminar un proceso hijo dentro del anillo. La syscall \mintinline{c}{read()} bloquea hasta poder leer la cantidad de bytes estipulados en el llamado, o hasta detectar el EOF. La función nos retorna la cantidad de bytes leídos, y en el caso de EOF, retorna 0. El SO mantiene un contador de la cantidad de file descriptors abiertos a la punta de escritura de un pipe. Cuando ya no hay ninguno abierto, intentar leer de este pipe nos devuelve EOF, pues si nadie tiene un file descriptor para escribir, en efecto llegamos ``al final'' y no vamos a poder leer nada más.
 
-\meta{A veces las y los alumnos no terminan de entender muy bien cuándo y por qué cerrar los file descriptors de los pipes, y por eso recaen en cerrar todo lo que no vayan a usar apostando a que las cosas simplemente funcionen. Considero importante entender a fondo este concepto para poder usarlo como una herramienta más a nuestro favor, y no fomentar una práctica de programación azarosa donde se escribe código sin saber bien por qué.}
-
 Esto nos permite utilizar un esquema en donde hacemos \mintinline{c}{while(read() > 0)} para procesar una cantidad arbitraria de datos hasta llegar al EOF. Observemos que esta estrategia funciona muy bien con este problema, ya que no sabemos cuántas vueltas va a girar el número por el anillo (es decir, no sabemos cuántos datos tiene que leer cada hijo de antemano).
 
 Cuando el hijo especial $K$ detecta la condición de salida, sale forzosamente del \mintinline{c}{while(read() > 0)} con un \mintinline{c}{break} y termina la ejecución del proceso con un \mintinline{c}{exit()}. El SO automáticamente libera todos los recursos de un proceso cuando este termina, en particular, cierra el file descriptor de la punta de escritura del pipe que comunica al hijo $K$ con su sucesor. Esto dispara un efecto en cascada en donde todos los procesos en el anillo terminan su ejecución. El sucesor de $K$ sale del \mintinline{c}{while(read() > 0)} porque \mintinline{c}{read()} retornó 0 (EOF). Igual que antes, el SO libera los recursos de este proceso generando que el ``sucesor del sucesor'' de $K$ también salga del \mintinline{c}{while(read() > 0)}, y así vamos terminando secuencialmente todos los procesos del anillo, a partir del hijo $K$ hasta dar toda la vuelta.
@@ -98,6 +96,8 @@ En el siguiente gráfico vemos un ejemplo con $N = 4$ y $K = 0$. Supongamos que 
 A continuación presentamos el código de los hijos.
 
 \meta{Usamos una única función para todos los hijos, pero es muy probable que durante la clase alguien proponga tener dos funciones separadas. Es una solución igual de válida. Dado que el hijo $K$ no es radicalmente distinto al resto, me pareció oportuno plantear una única función para reutilizar la lógica en común, y para reforzar la idea de que si bien hay un hijo especial, es también ``uno más'' del anillo. Si tenemos que modificar el comportamiento del anillo, ahora solo tenemos que modificar el código en un solo lugar.}
+
+\pagebreak
 
 \begin{minted}{c}
 void worker(int i, int fd_read, int fd_write, int fd_result) {
