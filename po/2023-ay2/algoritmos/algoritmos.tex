@@ -1,0 +1,101 @@
+\input{template}
+
+\pagesetup{12pt}
+
+\definecolor{P}{HTML}{007FFF}
+\definecolor{Q}{HTML}{FF8000}
+\definecolor{C}{HTML}{00FF80}
+\definecolor{R}{HTML}{FF3333}
+
+\begin{document}
+
+\textbf{Prueba de Oposición - Área Algoritmos}
+\hfill
+Jonathan Bekenstein - \today
+
+\section*{Enunciado: AED3 / Práctica 2 / Ejercicio 6}
+
+Sea $G$ un grafo conexo. Demostrar por el contrarrecíproco que todo par de caminos simples de longitud máxima de $G$ tienen un vértice en común. Ayuda: suponer que hay dos caminos disjuntos en vértices de igual longitud y definir explícitamente un camino que sea más largo que ellos.
+
+\section*{Contexto y conocimientos previos}
+
+Este ejercicio es uno de los primeros de demostración sobre grafos. Si bien el ejercicio no es difícil, es una buena oportunidad para introducir algunas estrategias generales, como por ejemplo:
+
+\begin{itemize}
+    \item Plantear caminos arbitrarios sin sobreespecificar sus características: es suficiente con decir un camino de $u$ a $v$, o necesitamos enumerar todos los vértices: $u_1$, $u_2$, $\dots$, $u_n$?
+    \item Apoyarse fuertemente en las hipótesis dadas por el enunciado (el grafo es conexo). En general no se dan hipótesis extra que no se usan.
+\end{itemize}
+
+Si bien recién arrancamos a trabajar con grafos, asumimos que las y los alumnos ya están familiarizados con los conceptos básicos de un grafo: vértices, aristas, caminos, conexidad.
+
+\section*{Resolución}
+
+Encaremos la demostración con la ayuda que nos da el enunciado. Sean $P$ y $Q$ dos caminos de longitud máxima en $G$. Supongamos que estos caminos son disjuntos en vértices. Es decir, no existe ningún vértice que pertenezca a ambos caminos. Observemos que necesariamente tienen la misma longitud ($|P| = |Q|$) pues ambos son caminos de longitud máxima.
+
+\vskip 1em
+\includesvg[width=0.3\linewidth]{assets/01.svg}
+
+\meta{Tengamos en cuenta que solo dibujamos los dos caminos que nos interesan. El grafo podría tener otros vértices y aristas que no son relevantes aún para la demostración.}
+
+Aprovechemos las hipótesis del enunciado. Como $G$ es conexo, por definición existe al menos un camino simple entre todo par de vértices. Dado que $P$ y $Q$ no comparten vértices por construcción, necesariamente tiene que existir un camino simple $C$ que conecte un vértice $u \in P$ con otro $v \in Q$ tal que $u \neq v$. De esta forma, podemos llegar desde cualquier vértice de $P$ a cualquier otro de $Q$ (utlizando $C$ y algunas secciones de $P$ y $Q$). En particular tomamos $C$ tal que $u$ es el único vértice compartido con $P$, y $v$ el único compartido con $Q$, así no hay secciones de $C$ incluidas en $P$ ni en $Q$.
+
+\vskip 1em
+\includesvg[width=0.3\linewidth]{assets/02.svg}
+
+Los vértices $u$ y $v$ dividen a $P$ y $Q$ cada uno en dos secciones. La sección $P_I$ es el camino desde $u$ hacia el extremo izquierdo de $P$, y la sección $P_D$ es el camino desde $u$ hacia el extremo derecho de $P$. De igual forma definimos $Q_I$ y $Q_D$.
+
+\vskip 1em
+\includesvg[width=0.3\linewidth]{assets/03.svg}
+
+\meta{Los términos izquierda y derecha son solo nombres arbitrarios, este grafo no codifica ninguna geometría. Si dibujamos los caminos verticales podríamos llamar las secciones arriba y abajo.}
+
+\meta{Hacer hincapié en mantenerse lo más general posible. Puede pasar que $u$ sea un extremo de $P$, y por lo tanto una de las secciones es exactamente $P$ y la otra es una sección vacía (son caminos simples). No es necesario contemplar este caso explícitamente en la demostración.}
+
+Ahora nos interesa tomar la sección más larga de cada camino $P$ y $Q$. Sea $P_u = max\{ P_I, P_D \}$ el camino simple más largo desde $u$ hacia algún extremo. De la misma forma definimos $Q_v = max\{ Q_I, Q_D \}$.
+
+\vskip 1em
+\includesvg[width=0.3\linewidth]{assets/04.svg}
+
+\meta{En el dibujo $P_u = P_I$ y $Q_v = Q_D$ solo a modo ilustrativo. Podría darse cualquiera de las 4 combinaciones.}
+
+Utilizando $+$ como la concatenación de caminos, llamemos $R = P_u + C + Q_v$ al camino simple compuesto por las secciones $P_u$, $C$ y $Q_v$.
+
+\vskip 1em
+\includesvg[width=0.3\linewidth]{assets/05.svg}
+
+\meta{Aclarar que el grafo no es dirigido, es arbitrario definir $R$ ``empezando'' por $P_u$, podríamos haber dicho $R = Q_v + C + P_u$.}
+
+Ya casi llegamos al remate de la demostración. Analicemos la longitud del camino simple $R$ que construimos. Recordemos que la longitud de un camino simple es la cantidad de aristas en el camino, y a su vez, si construimos un camino a partir de varias secciones (como en nuestro caso), su longitud es la suma de las longitudes de cada sección.
+
+$$
+|\textcolor{R}{R}| = |\textcolor{P}{P_u} + \textcolor{C}{C} + \textcolor{Q}{Q_v}| = |\textcolor{P}{P_u}| + |\textcolor{C}{C}| + |\textcolor{Q}{Q_v}|
+$$
+
+\pagebreak
+
+Busquemos cotas para la longitud de cada sección.
+
+\begin{itemize}
+    \item Por definición, $P_u$ es la sección más larga desde $u$ hacia algún extremo de $P$. En particular, $|P_u| \geq \frac{|P|}{2}$ pues sino hubiésemos tomado la otra sección, hacia el otro extremo de $P$.
+    \item Con el mismo argumento vale $|Q_v| \geq \frac{|Q|}{2}$.
+    \item A su vez, recordemos que inicialmente tomamos $P$ y $Q$ tales que $|P| = |Q|$.
+    \item Por último, $|C| \geq 1$ ya que es un camino entre $u$ y $v$ con $u \neq v$. Necesariamente hay al menos una arista en $C$. Podemos asegurar que $u \neq v$ pues $u \in P$, $v \in Q$, y por construcción $P$ y $Q$ son disjuntos en vértices.
+\end{itemize}
+
+\meta{Mencionar lo útil que es construir sobre nuestras propias definiciones (siempre y cuando sean válidas). En este caso nos apoyamos fuertemente en haber tomado $P$ y $Q$ disjuntos en vértices. De forma similar a como creamos capas de abstracción en el código, podemos hacer algo similar en nuestras demostraciones. Por ejemplo, en vez de atacar la demostración de forma directa, primero identificar alguna propiedad que de ser verdadera, nos simplificaría mucho la demostración. Definimos un lema de esta propiedad y lo probamos de forma aislada. Luego, asumiendo esta propiedad como válida, demostramos lo que queríamos en primer lugar de forma más directa/simple.}
+
+Aplicamos las cotas encontradas:
+\begin{alignat*}{2}
+    |R| &= |P_u| + |C| + |Q_v| \\
+    &\geq \frac{|P|}{2} + 1 + \frac{|Q|}{2} && \hspace{3em} \textcolor{gray}{|P_u| \geq \frac{|P|}{2} \;\;\land \;\; |C| \geq 1 \;\;\land \;\; |Q_v| \geq \frac{|Q|}{2}} \\
+    &= \frac{|P|}{2} + 1 + \frac{|P|}{2} && \hspace{3em} \textcolor{gray}{|P| = |Q|} \\
+    &= |P| + 1
+\end{alignat*}
+
+Un momento... Dijimos que $P$ es un camino de longitud máxima en $G$, pero encontramos otro camino $R$ que es aún más largo. Esto es absurdo, y provino de suponer que $P$ y $Q$, dos caminos de longitud máxima en un grafo $G$ conexo, son disjuntos en vértices. Por lo tanto, podemos concluir que en un grafo $G$ conexo, dos caminos de longitud máxima necesariamente comparten al menos un vértice.
+
+\section*{Conclusión}
+
+El ejercicio seleccionado no es muy integrador ya que no se usan muchas propiedades ni temas avanzados, por eso es una buena introducción a la práctica 2 donde comenzamos a trabjar con grafos. Recién aprendimos qué es un grafo y primero necesitamos afianzar las definiciones con algunos ejercicios sencillos como este. Destaco la importancia de hacer dibujitos ya que ayuda mucho a entender la estructura interna del grafo con el que estamos trabajando. Daría este ejercicio en clase directamente en el pizarrón aprovechando que no hay que escribir mucho.
+
+\end{document}
